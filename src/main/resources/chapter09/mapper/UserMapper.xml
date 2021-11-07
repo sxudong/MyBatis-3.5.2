@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--namespace 因为要接口绑定，所以是接口的全限定类名-->
+<mapper namespace="com.learn.chapter09.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.learn.chapter09.pojo.User">
+        <result property="id" column="id"/>
+        <result property="userName" column="user_name"/>
+        <result property="cnname" column="cnname"/>
+        <result property="sex" column="sex"/>
+        <result property="mobile" column="mobile"/>
+        <result property="email" column="email"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_name, cnname, sex, mobile, email, note
+    </sql>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_user
+    </select>
+
+    <!--id 与接口的方法名相同-->
+    <select id="getAllUserByPage"  resultType="user">
+        select id, user_name as userName, cnname, sex, mobile, email, note from t_user
+    </select>
+
+    <select id="queryAllUserByPage"  resultType="user">
+        select id, user_name as userName, cnname, sex, mobile, email, note from t_user
+    </select>
+
+
+    <insert id="insertUser" parameterType="user">
+		insert into t_user(user_name, cnname, sex, mobile, email, note)
+		value(#{userName}, #{cnname}, #{sex}, #{mobile}, #{email}, #{note})
+	</insert>
+
+
+    <!-- 批量操作和foreach标签 -->
+    <insert id="batchInsertUser" parameterType="java.util.List">
+        insert into t_user(cnname, sex, mobile) values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.cnname}, #{user.sex}, #{user.mobile})
+        </foreach>
+    </insert>
+
+    <!-- 当collection="list"时，传入参数为列表; 当collection="array"时，传入参数为数组。 -->
+    <delete id="batchDeleteUser">
+        delete from t_user where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateUser" parameterType="user">
+        update t_role
+        <set>
+            <if test="userName != null"> user_name = #{userName} </if>
+            <if test="cnname != null"> cnname = #{cnname} </if>
+            <if test="sex != null"> sex = #{sex} </if>
+            <if test="mobile != null"> mobile = #{mobile} </if>
+            <if test="email != null"> email = #{email} </if>
+            <if test="note != null"> note = #{note} </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRole" parameterType="int">
+		delete from t_user where id = #{id}
+	</delete>
+
+    <select id="getUser" parameterType="int" resultMap="BaseResultMap">
+		select user_name as userName, cnname, sex, mobile, email, note
+		from t_user
+		where id = #{id}
+	</select>
+
+    <select id="findUsers" parameterType="string" resultMap="BaseResultMap">
+        select user_name as userName, cnname, sex, mobile, email, note
+        from t_user
+        <where>
+            <if test="userName != null">
+                user_name like concat('%', #{userName}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

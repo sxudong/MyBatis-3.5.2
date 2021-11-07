@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.learn.chapter09.mapper.ProcedureMapper">
+
+    <!-- 使用 resultMap 映射结果集 -->
+    <resultMap id="roleMap" type="com.learn.chapter09.pojo.Role">
+        <id property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <!-- 9.3 调用存储过程 p217-->
+    <select id="count" parameterType="com.learn.chapter09.pojo.ProcedurePojo"
+            statementType="CALLABLE">
+        {call count_role(
+          #{roleName, mode=IN, jdbcType=VARCHAR},
+          #{result, mode=OUT, jdbcType=INTEGER}
+        )}
+    </select>
+
+    <!-- Oracle 数据库的语法游标，MySQL不支持这种方式 《深入浅出MyBatis》9.3.2 存储过程游标-->
+    <select id="findRole" parameterType="com.learn.chapter09.pojo.PageRole"
+            statementType="CALLABLE">
+        {call find_role(
+                #{roleName, mode=IN, jdbcType=VARCHAR},
+                #{start, mode=IN, jdbcType=INTEGER},
+                #{end, mode=IN, jdbcType=INTEGER},
+                #{count, mode=OUT, jdbcType=INTEGER},
+                #{roleList, mode=OUT, jdbcType=CURSOR, javaType=ResultSet, resultMap=roleMap}
+            )}
+    </select>
+
+</mapper>

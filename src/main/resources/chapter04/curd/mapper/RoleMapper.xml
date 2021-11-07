@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter04.curd.mapper.RoleMapper">
+
+    <!-- 使用POJO存储结果集 -->
+    <!-- 配置结果映射集，type 代表需要映射的POJO -->
+    <resultMap id="roleMap" type="com.learn.chapter04.curd.pojo.Role">
+        <id property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <!-- 4.6 sql 元素 -->
+    <sql id="find_role">
+        SELECT id, role_name, note FROM t_role
+        WHERE role_name LIKE concat('%', #{roleName}, '%')
+          AND note LIKE concat('%', #{note}, '%')
+    </sql>
+
+    <!-- 使用 map 传递参数 -->
+    <select id="findRoleByMap" parameterType="map" resultMap="roleMap">
+        <!-- 复用sql -->
+        <include refid="find_role"/>
+    </select>
+
+    <!-- 使用 注解 传递参数 -->
+    <select id="findRoleByAnnotation" resultMap="roleMap">
+        <include refid="find_role"/>
+    </select>
+
+    <!-- 使用 JavaBean 传递参数 -->
+    <select id="findRoleByParams" parameterType="com.learn.chapter04.curd.pojo.RoleParam"
+            resultMap="roleMap">
+        <include refid="find_role"/>
+    </select>
+
+    <!-- useGeneratedKeys：由数据库内部生成主键。keyProperty：指明主键。-->
+    <insert id="insertRole" parameterType="com.learn.chapter04.curd.pojo.Role" useGeneratedKeys="true" keyProperty="id">
+        <!-- 使用selectKey元素，自定义主键生成规则 -->
+        <selectKey keyProperty="id" resultType="int" order="BEFORE">
+            select if (max(id) is null, 1, max(id)+2) as newId from t_role
+        </selectKey>
+        insert into t_role(id, role_name, note) values(#{id}, #{roleName}, #{note})
+    </insert>
+
+    <delete id="deleteRole" parameterType="java.lang.Integer">
+        delete from t_role where id=#{id}
+    </delete>
+
+    <update id="updateRole" parameterType="com.learn.chapter04.curd.pojo.Role">
+        update t_role set role_name = #{roleName}, note = #{note}
+        where id=#{id}
+    </update>
+
+    <select id="selectAllData" resultType="com.learn.chapter04.curd.pojo.Role">
+        select id,role_name roleName,note from t_role
+    </select>
+
+    <!-- 使用Map存储结果集 -->
+    <select id="findRoleByNote" parameterType="int" resultType="map">
+        select id,role_name,note from t_role where id=#{id}
+    </select>
+
+    <select parameterType="int" id="getRole" resultMap="roleMap">
+        select id,role_name,note from t_role where id=#{id}
+    </select>
+
+</mapper>

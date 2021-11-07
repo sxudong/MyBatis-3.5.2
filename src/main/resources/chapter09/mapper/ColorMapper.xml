@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--namespace 因为要接口绑定，所以是接口的全限定类名-->
+<mapper namespace="com.learn.chapter09.mapper.ColorMapper">
+
+    <resultMap id="colorResultMapper" type="com.learn.chapter09.pojo.ColorBean">
+      <result property="id" column="id" />
+      <result property="color" jdbcType="INTEGER" javaType="com.learn.chapter09.typeHandler.Color"
+              typeHandler="com.learn.chapter09.typeHandler.ColorEnumTypeHandler"/>
+      <result property="note" column="note"/>
+    </resultMap>
+
+    <select id="getColor" parameterType="int" resultMap="colorResultMapper">
+      select id, color, note, from t_color where id = #{id}
+    </select>
+
+</mapper>

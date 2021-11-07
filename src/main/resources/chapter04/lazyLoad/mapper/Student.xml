@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter04.lazyLoad.mapper.StudentMapper">
+    <resultMap id="studentMap" type="com.learn.chapter04.lazyLoad.pojo.Student">
+        <id property="id" column="id"/>
+        <result property="cnName" column="cnname"/>
+        <result property="selfCardNo" column="selfcard_no"/>
+        <result property="note" column="note"/>
+        <result property="sex" column="sex" jdbcType="INTEGER" javaType="com.learn.chapter04.lazyLoad.pojo.SexEnum"
+                typeHandler="com.learn.chapter04.lazyLoad.pojo.SexTypeHandler"/>
+        <!-- 旧配置 未局部延迟加载 -->
+        <!--<association property="studentSelfcard" column="id"-->
+        <!--select="com.learn.chapter04.lazyLoad.mapper.StudentSelfcardMapper.findStudentSelfcardByStudentId"/>-->
+        <!--<collection property="studentLectureList" column="id"-->
+        <!--select="com.learn.chapter04.lazyLoad.mapper.StudentLectureMapper.findStudentLectureByStudentId"/>-->
+        <!-- 新配置 添加局部延迟加载 -->
+        <!-- 在 association 和 collection 元素上加入属性 fetchType，它有两个取值范围：eager 和 lazy  -->
+        <association property="studentSelfcard" column="id" fetchType="lazy"
+                     select="com.learn.chapter04.lazyLoad.mapper.StudentSelfcardMapper.findStudentSelfcardByStudentId"/> <!-- 学生证信息：t_student_selfcard -->
+        <collection property="studentLectureList" column="id" fetchType="lazy"
+                    select="com.learn.chapter04.lazyLoad.mapper.StudentLectureMapper.findStudentLectureByStudentId"/> <!-- 课程信息：t_student_selfcard -->
+        <!-- discriminator 元素鉴别器级联 -->
+        <!-- 它相当于 Java 的 switch 语句，当sex=1 时，使用"maleStudentMap"，当sex=2 时，使用"femaleStudentMap"。 -->
+        <discriminator javaType="int" column="sex">
+            <case value="1" resultMap="maleStudentMap"/>
+            <case value="2" resultMap="femaleStudentMap"/>
+        </discriminator>
+    </resultMap>
+
+    <select id="getStudent" parameterType="int" resultMap="studentMap">
+        select id, cnname, sex, note, selfcard_no from t_student where id=#{id}
+    </select>
+
+    <!-- 旧配置 未局部延迟加载 -->
+    <!-- extends="studentMap" 它们都扩展了原有的 studentMap，正如类的关系一样，resultMap也可以继承。 -->
+    <!--<resultMap id="maleStudentMap" type="com.johnny.pojo.MaleStudent" extends="studentMap">-->
+    <!--<collection property="studentHealthMaleList"-->
+    <!--select="com.learn.chapter04.lazyLoad.mapper.StudentHealthMaleMapper.findStudentHealthMaleByStudentId" column="id"/>-->
+    <!--</resultMap>-->
+
+    <!--<resultMap id="femaleStudentMap" type="com.johnny.pojo.FemaleStudent" extends="studentMap">-->
+    <!--<collection property="studentHealthFemaleList"-->
+    <!--select="com.learn.chapter04.lazyLoad.mapper.StudentHealthFemaleMapper.findStudentHealthFemaleByStudentId" column="id"/>-->
+    <!--</resultMap>-->
+
+    <!-- 新配置 添加局部延迟加载 -->
+    <!-- 在 association 和 collection 元素上加入属性 fetchType，它有两个取值范围：eager 和 lazy  -->
+    <resultMap id="maleStudentMap" type="com.learn.chapter04.lazyLoad.pojo.MaleStudent" extends="studentMap">
+        <collection property="studentHealthMaleList" fetchType="lazy"
+                    select="com.learn.chapter04.lazyLoad.mapper.StudentHealthMaleMapper.findStudentHealthMaleByStudentId" column="id"/>
+    </resultMap>
+
+    <resultMap id="femaleStudentMap" type="com.learn.chapter04.lazyLoad.pojo.FemaleStudent" extends="studentMap">
+        <collection property="studentHealthFemaleList" fetchType="lazy"
+                    select="com.learn.chapter04.lazyLoad.mapper.StudentHealthFemaleMappr.findStudentHealthFemaleByStudentId" column="id"/>
+    </resultMap>
+</mapper>

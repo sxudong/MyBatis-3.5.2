@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+	<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <!-- mybatis-spring 整合的jar包源码中会根据 namespace 验证，保证配置的接口存在对应的映射文件，否则报错。参考《spring源码深度解析》P243 -->
+	<mapper namespace="com.learn.chapter02.mapper.RoleMapper">
+
+	<!--
+	     XML 文件配置方式实现 Mapper。它由一个Java接口和 一个XML文件构成。
+	     注意 接口方法 要和 XML映射文件的 id 保持一致。
+	-->
+
+	<!--<cache type="org.mybatis.caches.redis.RedisCache" />-->
+
+	<!-- 查询一个角色对象
+	     #{id} 为这条 SQL 的参数，SQL的别名与POJO的属性名称保持一致。
+	     那么 MyBatis就会把这条语句查询的结果自动映射到我们需要的 POJO属性 上面，
+	     这就是自动映射。
+	 -->
+	<select id="getRole" parameterType="long" resultType="role">
+		SELECT id, role_name AS roleName, note FROM t_role WHERE id = #{id}
+	</select>
+
+	<!-- 插入角色 -->
+	<insert id="insertRole" parameterType="role">
+		INSERT INTO t_role(id, role_name, note) VALUES(#{id}, #{roleName}, #{note})
+	</insert>
+
+	<!-- 删除角色表的数据 -->
+	<delete id="deleteRole" parameterType="long">
+		DELETE FROM t_role WHERE id = #{id}
+	</delete>
+
+</mapper>
+<!--
+	描述一下上面的 XML 文件做了什么？
+	- 这个文件是我们在配置文件 mybatis-config.xml 中配置了的，所以 MyBatis会读取这个
+	  配置文件，生成映射器。
+	- 定义了一个命名空间 com.learn.chapter02.mapper.RoleMapper 的 SQL Mapper，这个"命名空间"
+	  和我们定义的接口的全限定名是一致的。
+	- 用一个 <select>元素 定义了一个查询 SQL，
+	  id 为 getRole，和我们接口方法是一致的，
+	  parameterType 则表示我们要传递给这条 SQL 的是一个 java.lang.Long 型参数，
+	  resultType 则定义我们需要返回的数据类型。
+-->

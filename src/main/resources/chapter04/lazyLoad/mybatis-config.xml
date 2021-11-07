@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!--    <properties resource="chapter04/lazyLoad/application.properties"></properties>-->
+    <properties resource="chapter04/lazyLoad/application.properties"></properties>
+
+    <!-- 配置 全局延迟加载 -->
+    <settings>
+        <!-- 使用 log4j2 打印查询语句 -->
+        <setting name="logImpl" value="LOG4J2" />
+        <!-- 按层级输出 -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <!-- 默认为true按层级输出，false不按层输出，按程序调用要求输出 -->
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <plugins>
+        <!-- 拦截器配置 -->
+        <plugin interceptor="com.learn.interceptor.SqlCostInterceptor" />
+    </plugins>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+                <!--<property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis_all?useSSL=false&amp;serverTimezone=UTC"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>-->
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="chapter04/lazyLoad/mapper/Lecture.xml"/>
+        <mapper resource="chapter04/lazyLoad/mapper/StudentHealthFemale.xml"/>
+        <mapper resource="chapter04/lazyLoad/mapper/StudentHealthMale.xml"/>
+        <mapper resource="chapter04/lazyLoad/mapper/StudentLecture.xml"/>
+        <mapper resource="chapter04/lazyLoad/mapper/StudentSelfcard.xml"/>
+        <mapper resource="chapter04/lazyLoad/mapper/Student.xml"/>
+    </mappers>
+</configuration>

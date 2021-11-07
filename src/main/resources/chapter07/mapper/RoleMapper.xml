@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter07.mapper.RoleMapper">
+
+    <insert id="insertRole" parameterType="com.learn.chapter07.pojo.Role">
+        INSERT INTO t_role (role_name, note) VALUES (#{role.roleName}, #{role.note})
+    </insert>
+
+    <select id="findAllRole" resultType="com.learn.chapter07.pojo.Role">
+        select * from t_role
+    </select>
+
+</mapper>

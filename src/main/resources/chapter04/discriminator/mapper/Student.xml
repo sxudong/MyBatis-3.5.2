@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter04.discriminator.mapper.StudentMapper">
+    <resultMap id="studentMap" type="com.learn.chapter04.discriminator.pojo.Student">
+        <id property="id" column="id"/>
+        <result property="cnName" column="cnname"/>
+        <result property="selfCardNo" column="selfcard_no"/>
+        <result property="note" column="note"/>
+        <result property="sex" column="sex" jdbcType="INTEGER" javaType="com.learn.chapter04.discriminator.pojo.SexEnum"
+                typeHandler="com.learn.chapter04.discriminator.pojo.SexTypeHandler"/>
+        <association property="studentSelfcard" column="id"
+                     select="com.learn.chapter04.discriminator.mapper.StudentSelfcardMapper.findStudentSelfcardByStudentId"/>
+        <collection property="studentLectureList" column="id"
+                    select="com.learn.chapter04.discriminator.mapper.StudentLectureMapper.findStudentLectureByStudentId"/>
+        <!-- discriminator元素 鉴别器级联 -->
+        <!-- 它相当于 Java 的 switch 语句，当sex=1 时，使用"maleStudentMap"，当sex=2 时，使用"femaleStudentMap"。 -->
+        <discriminator javaType="int" column="sex">
+            <case value="1" resultMap="maleStudentMap"/>
+            <case value="2" resultMap="femaleStudentMap"/>
+        </discriminator>
+    </resultMap>
+
+    <select id="getStudent" parameterType="int" resultMap="studentMap">
+        select id,cnname,sex,note,selfcard_no from t_student where id=#{id}
+    </select>
+
+    <!-- extends="studentMap" 它们都扩展了原有的 studentMap，正如类的关系一样，resultMap也可以继承。 -->
+    <resultMap id="maleStudentMap" type="com.learn.chapter04.discriminator.pojo.MaleStudent" extends="studentMap">
+        <collection property="studentHealthMaleList"
+                    select="com.learn.chapter04.discriminator.mapper.StudentHealthMaleMapper.findStudentHealthMaleByStudentId" column="id"/>  <!-- findStudentHealthMaleByStudentId() -->
+    </resultMap>
+
+    <resultMap id="femaleStudentMap" type="com.learn.chapter04.discriminator.pojo.FemaleStudent" extends="studentMap">
+        <collection property="studentHealthFemaleList"
+                    select="com.learn.chapter04.discriminator.mapper.StudentHealthFemaleMapper.findStudentHealthFemaleByStudentId" column="id"/>  <!-- findStudentHealthFemaleByStudentId() -->
+    </resultMap>
+</mapper>

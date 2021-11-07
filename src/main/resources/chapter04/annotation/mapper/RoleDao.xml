@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.learn.chapter04.annotation.dao.RoleDao">
+
+    <!-- 使用 resultMap 映射结果集 -->
+    <resultMap id="roleMap" type="com.learn.chapter04.annotation.pojo.Role">
+        <id property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <select id="findRoleByAnnotation" resultMap="roleMap">
+        SELECT id, role_name, note FROM t_role
+        WHERE role_name LIKE concat('%', #{roleName}, '%')
+        AND note LIKE concat('%', #{note}, '%')
+    </select>
+
+</mapper>

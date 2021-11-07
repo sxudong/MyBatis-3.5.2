@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter04.sqlElement.mapper.RoleMapper">
+
+    <!-- 使用POJO存储结果集 -->
+    <!-- 配置结果映射集，type 代表需要映射的POJO -->
+    <resultMap id="roleMap" type="com.learn.chapter04.sqlElement.pojo.Role">
+        <id property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <!-- 定义复用的 sql -->
+    <sql id="role_columns">
+        id, role_name, note
+    </sql>
+
+    <select id="getRole" parameterType="int" resultMap="roleMap">
+        select
+        <include refid="role_columns"/> <!-- 引用 复用的sql -->
+        from t_role where id=#{id}
+    </select>
+
+    <select id="findRoles" parameterType="map"  resultMap="roleMap">
+        select id,role_name,note from t_role
+        where role_name like concat('%',#{roleName},'%')
+          and note like concat('%',#{note},'%')
+    </select>
+
+    <!--定制参数，可能版本问题，导致报错：元素类型为 "include" 的内容必须匹配 "EMPTY"。不允许使用类型为 "comment" 的子级。
+        正常要 3.3.0 以版本才支持前缀变量的写法。-->
+<!--    <sql id="role_custom_columns">-->
+<!--        ${prefix}.id, ${prefix}.role_name, ${prefix}.note-->
+<!--    </sql-->
+
+<!--    <select id="getRoleCustom" parameterType="int" resultMap="roleMap">-->
+<!--        select-->
+<!--        <include refid="role_custom_columns">-->
+<!--            <property name="prefix" value="r"/>-->
+<!--        </include>-->
+<!--        from t_role r where id=#{id}-->
+<!--    </select>-->
+
+    <sql id="role_custom_columns">
+        r.id, r.role_name, r.note
+    </sql>
+
+    <select id="getRoleCustom" parameterType="int" resultMap="roleMap">
+        select
+        <include refid="role_custom_columns"/>
+        from t_role r where id=#{id}
+    </select>
+
+</mapper>

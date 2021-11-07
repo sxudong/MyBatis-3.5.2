@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter03.mapper.ConsumerMapper">
+
+    <resultMap id="userResultMap" type="com.learn.chapter03.bean.Consumer">
+        <result column="regTime" property="regTime" javaType="java.util.Date" jdbcType="VARCHAR"
+                typeHandler="com.learn.chapter03.typeHandler.MyDateTypeHandler"/>
+    </resultMap>
+
+    <select id="getUser" resultType="com.learn.chapter03.bean.Consumer">
+        select * from consumer
+    </select>
+
+    <select id="getPerson" resultType="com.learn.chapter03.bean.Person">
+        select * from person
+    </select>
+
+    <select id="getUser2" resultMap="userResultMap">
+        select * from consumer
+    </select>
+
+    <insert id="insertConsumer" parameterType="com.learn.chapter03.bean.Consumer">
+        INSERT INTO consumer(username, password, regTime)
+        VALUES (#{username},#{password},#{regTime, javaType=Date, jdbcType=VARCHAR, typeHandler=com.learn.chapter03.typeHandler.MyDateTypeHandler})
+    </insert>
+
+    <insert id="insertConsumer2">
+        INSERT INTO consumer(username, password, regTime)
+        VALUES (#{username}, #{password}, #{regTime, javaType=Date, jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="insertConsumer3">
+        INSERT INTO consumer(username, password, regTime)
+        VALUES (#{username},#{password},#{regTime,typeHandler=com.learn.chapter03.typeHandler.MyDateTypeHandler})
+    </insert>
+
+    <insert id="insertPerson">
+        INSERT INTO person(interest) VALUES (#{interest, typeHandler=com.learn.chapter03.typeHandler.MyListTypeHandler})
+    </insert>
+</mapper>

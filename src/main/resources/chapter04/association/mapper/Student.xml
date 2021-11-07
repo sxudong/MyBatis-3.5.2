@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter04.association.mapper.StudentMapper">
+    <resultMap id="studentMap" type="com.learn.chapter04.association.pojo.Student">
+        <id property="id" column="id"/>
+        <result property="cnName" column="cnname"/>
+        <result property="selfCardNo" column="selfcard_no"/>
+        <result property="note" column="note"/>
+        <!-- 使用自定义枚举 SexTypeHandler 处理数据 -->
+        <result property="sex" column="sex" jdbcType="INTEGER" javaType="com.learn.chapter04.association.pojo.SexEnum"
+                typeHandler="com.learn.chapter04.association.pojo.SexTypeHandler"/>
+        <!--  column 是指定传递给select语句的参数，这里是Student的id，如果是多个参数，则使用逗
+              号分隔。当取出Student的时候，MyBatis就会知道用下面的SQL取出我们需要的联级信息。 -->
+        <association property="studentSelfcard" column="id"
+                     select="com.learn.chapter04.association.mapper.StudentSelfcardMapper.findStudentSelfcardByStudentId"/>
+    </resultMap>
+    <select id="getStudent" parameterType="int" resultMap="studentMap">
+        SELECT id,cnname,sex,note,selfcard_no FROM t_student WHERE id=#{id}
+    </select>
+
+</mapper>

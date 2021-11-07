@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter07.mapper.UserMapper">
+
+    <select id="findUserBySex" resultType="com.learn.chapter07.pojo.User">
+        SELECT id,user_name AS userName,cnname AS cnName,sex,mobile,email,note FROM t_user WHERE sex IN
+        <foreach collection="sexList" item="sex" index="index" open="(" separator="," close=")">
+            #{sex}
+        </foreach>
+    </select>
+
+</mapper>

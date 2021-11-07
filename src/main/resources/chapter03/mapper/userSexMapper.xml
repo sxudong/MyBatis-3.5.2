@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter03.mapper.UserSexMapper">
+
+    <resultMap id="userSexResultMap" type="com.learn.chapter03.bean.UserSex">
+        <!-- 定义结果类型转化器标识，才能使用类型转换器 -->
+        <id column="id" property="id" javaType="long"  jdbcType="BIGINT"/>
+        <result column="username" property="username" javaType="String"  jdbcType="VARCHAR"/>
+        <!-- <result column="sex" property="sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/> -->
+        <result column="sex" property="sex" typeHandler="com.learn.chapter03.typeHandler.SexEnumTypeHandler"/>
+    </resultMap>
+
+    <select id="getUser" parameterType="long" resultMap="userSexResultMap">
+        SELECT * FROM usersex WHERE id = #{id}
+    </select>
+
+    <select id="getUserAll" resultMap="userSexResultMap">
+        SELECT * FROM usersex
+    </select>
+
+    <insert id="insertUser" parameterType="com.learn.chapter03.bean.UserSex">
+        <!-- INSERT INTO usersex(username, sex) VALUES (#{username}, #{sex, typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler}) -->
+        INSERT INTO usersex(username, sex) VALUES (#{username}, #{sex, typeHandler=com.learn.chapter03.typeHandler.SexEnumTypeHandler})
+    </insert>
+</mapper>

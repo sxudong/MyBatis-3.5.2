@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 使用 properties 文件配置 -->
+    <properties resource="db.properties"/>
+
+    <settings>
+        <setting name="logImpl" value="LOG4J" />
+    </settings>
+
+    <typeAliases>
+        <!--【方式一】通过包扫描注册typeAlias -->
+        <!-- 说明：使用自动扫描时，对应的 PO 类可以使用 @Alias 注解指定别名。当没有使用 @Alias 指定别名时，默认为类名首字母小写 -->
+        <!-- <package name="learn.chapter3.bean"/> -->
+
+        <!--【方式二】定义别名-->
+        <typeAlias type="com.learn.chapter03.bean.Consumer" alias="consumer"/>
+        <typeAlias type="com.learn.chapter03.bean.UserSex" alias="userSex"/>
+        <typeAlias type="com.learn.chapter03.bean.Role" alias="role"/>
+        <typeAlias type="com.learn.chapter03.bean.User" alias="user"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <!-- 【方式一】通过包扫描注册typeHandler -->
+        <!-- <package name="learn.chapter3.typeHandler"/> -->
+
+        <!--注册自定义的 typeHandler-->
+        <typeHandler handler="com.learn.chapter03.typeHandler.MyDateTypeHandler"/>
+        <typeHandler handler="com.learn.chapter03.typeHandler.MyListTypeHandler"/>
+        <typeHandler handler="org.apache.ibatis.type.EnumOrdinalTypeHandler" javaType="com.learn.chapter03.enums.Sex"/>    <!-- 使用系统的枚举   EnumOrdinalTypeHandler -->
+        <typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" javaType="com.learn.chapter03.enums.Sex"/>           <!-- 使用系统的枚举   EnumTypeHandler -->
+        <typeHandler handler="com.learn.chapter03.typeHandler.SexEnumTypeHandler" javaType="com.learn.chapter03.enums.Sex"/>    <!-- 使用自定义的枚举 SexEnumTypeHandler -->
+        <typeHandler handler="com.learn.chapter03.typeHandler.MyStringTypeHandler" jdbcType="VARCHAR" javaType="string"/>  <!-- 使用自定义的枚举 MyStringTypeHandler -->
+    </typeHandlers>
+
+    <!-- 对象工厂-->
+    <objectFactory type="com.learn.chapter03.objectFactory.MyObjectFactory">
+        <property name="name" value="MyObjectFactory"/>
+    </objectFactory>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="chapter03/mapper/UserMapper.xml"/>
+        <mapper resource="chapter03/mapper/consumerMapper.xml"/>
+        <mapper resource="chapter03/mapper/userSexMapper.xml"/>
+        <mapper resource="chapter03/mapper/RoleMapper.xml"/>
+    </mappers>
+
+</configuration>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.learn.chapter04.discriminator.mapper.StudentHealthMaleMapper">
+    <select id="findStudentHealthMaleByStudentId" parameterType="int" resultType="com.learn.chapter04.discriminator.pojo.StudentHealthMale">
+        SELECT id,student_id,check_date,heart,liver,spleen,lung,kidney,prostate,note
+        FROM
+        t_student_health_male where student_id=#{id}
+    </select>
+</mapper>

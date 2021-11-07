@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 注意：每个标签必须按顺序写，不然蛋疼的DTD会提示错误：The content of element type "configuration" must match "
+(properties?,settings?,typeAliases?,typeHandlers?,objectFactory?,objectWrapperFactory?,plugins?,environments?, mappers?)". -->
+<configuration>
+	<!--使用 properties 文件配置-->
+	<properties resource="chapter02/jdbc.properties"/>
+	<settings>
+		<setting name="logImpl" value="LOG4J" />
+		<!--<setting name="cacheEnabled" value="true" />-->
+	</settings>
+	<!-- 定义别名 -->
+	<typeAliases>
+		<typeAlias alias="role" type="com.learn.chapter02.pojo.Role" />
+	</typeAliases>
+	<!-- 定义数据库信息，默认使用development数据库构建环境 -->
+	<environments default="development">
+		<environment id="development">
+			<!-- 采用 jdbc 事务管理 -->
+			<transactionManager type="JDBC">
+				<property name="autoCommit" value="false" />
+			</transactionManager>
+			<!-- 配置数据库链接信息 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}" />
+				<property name="url" value="${url}" />
+				<property name="username" value="${username}" />
+				<property name="password" value="${password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	<!-- 定义映射器( ORM 映射文件 ) -->
+	<mappers>
+		<mapper resource="chapter02/mapper/roleMapper.xml" />
+	</mappers>
+	<!--
+	对上面配置说明：
+	- 这里配置了一个别名 role，它代表 "com.learn.chapter2.pojo.Role",这样我们就可以在MyBatis上下文引用它了。
+	- 我们配置了一环境内容，它默认使用 id 是 development 的环境配置，包含以下两方面内容。
+	  （1）采用 JDBC 的事务管理模式。
+	  （2）数据库的连接信息。
+	- 配置映射器。
+	  这里引入一个 XML，它的作用是提供 SQL 和 SQL对POJO 的映射规则定义，它包含了映射器里面的信息。MyBites
+	  将解析这个 XML，为我们生成映射器。
+
+	  MyBatis 的解析程序会将 mybatis-config.xml 文件配置的信息解析到 Configuration类对象 里面
+	-->
+</configuration>
